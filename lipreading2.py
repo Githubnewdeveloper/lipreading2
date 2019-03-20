@@ -18,13 +18,12 @@ i = 0
 
 #遍历每一帧
 while(isOpened):
-    '''
+
     # 读取5张图片
     if i == 5:
         break
     else:
         i = i + 1
-    '''
 
     (flag, frame) = cap.read()
 
@@ -55,13 +54,11 @@ while(isOpened):
 
         cv2.imshow('frame', img)
 
-        '''
-
         fileName = 'img' + str(i) + '.jpg'
         print(fileName)
         if flag == True:
             cv2.imwrite(fileName, img, [cv2.IMWRITE_JPEG_QUALITY, 100])  # 1文件名，2内容，3保存的图片质量
-        '''
+
         if cv2.waitKey(1) & 0xFF == ord('q'):
             print("q pressed")
             break

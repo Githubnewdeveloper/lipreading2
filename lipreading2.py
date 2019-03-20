@@ -14,6 +14,11 @@ detector = dlib.get_frontal_face_detector()
 predictor = dlib.shape_predictor('shape_predictor_68_face_landmarks.dat')
 
 
+#设定红色阈值，HSV空间
+redLower = np.array([170, 43, 46])
+redUpper = np.array([180, 255, 255])
+
+
 #遍历每一帧
 while(isOpened):
     (flag, frame) = cap.read()
@@ -22,10 +27,10 @@ while(isOpened):
     #img = cv2.imread(frame)
 
     # 取灰度
-    gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
+    gray = cv2.cvtColor(frame,cv2.COLOR_BGR2GRAY)
 
     # 计算人脸68特征点坐标
-    positions_68_array = []
+    #positions_68_array = []
 
     faces = detector(gray, 1)#The 1 in the
     # second argument indicates that we should upsample the image 1 time. This
@@ -50,15 +55,29 @@ while(isOpened):
 
             cv2.line(frame,(shape.parts()[num-1].x, shape.parts()[num-1].y),(shape.parts()[num].x, shape.parts()[num].y),(255,0,0),1)
 
-            cv2.rectangle(frame,(shape.parts()[48].x, shape.parts()[52].y),(shape.parts()[54].x, shape.parts()[57].y),(0,0,255),1)
+            cv2.rectangle(frame,(shape.parts()[48].x-5, shape.parts()[52].y-5),(shape.parts()[54].x+5, shape.parts()[57].y+5),(0,0,255),1)
+            '''
+            img = frame[shape.parts()[48].x:shape.parts()[54].x,shape.parts()[52].y:shape.parts()[57].y]
 
-            img = frame[(shape.parts()[48].x, shape.parts()[52].y),(shape.parts()[54].x, shape.parts()[57].y)]
+            # 转到HSV空间
+            hsv = cv2.cvtColor(img, cv2.COLOR_BGR2HSV)
+            # 根据阈值构建掩膜
+            mask_red = cv2.inRange(hsv, redLower, redUpper)
+            # 腐蚀操作
+            mask_red = cv2.erode(mask_red, None, iterations=2)
+            # 膨胀操作，其实先腐蚀再膨胀的效果是开运算，去除噪点
+            mask_red = cv2.dilate(mask_red, None, iterations=2)
+
+            mask = mask_red
+
+            result = cv2.bitwise_and(img, img, mask=mask_red)
 
 
 
             #win.add_overlay(shape)
-
+            '''
         cv2.imshow('frame', frame)
+        #cv2.imshow('red',result)
         if cv2.waitKey(1) & 0xFF == ord('q'):
             print("q pressed")
             break

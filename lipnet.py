@@ -17,8 +17,8 @@ width = int(cap.get(cv2.CAP_PROP_FRAME_WIDTH))
 height = int(cap.get(cv2.CAP_PROP_FRAME_HEIGHT))
 
 #设定红色阈值，HSV空间
-redLower = np.array([170, 100, 100])
-redUpper = np.array([179, 255, 255])
+redLower = np.array([170, 43, 46])
+redUpper = np.array([180, 255, 255])
 
 i = 0
 
@@ -28,10 +28,10 @@ print(flag)
 '''
 
 #遍历每一帧
-while((isOpened) and (i < 3)):
+while(isOpened):
     (flag, frame) = cap.read()
     #重要语句！！
-    if ((flag == True) and (i < 3)):
+    if (flag == True):
         # 转到HSV空间
         hsv = cv2.cvtColor(frame, cv2.COLOR_BGR2HSV)
         # 根据阈值构建掩膜
@@ -43,7 +43,11 @@ while((isOpened) and (i < 3)):
 
         mask = mask_red
 
-        cv2.imshow('src',mask_red)
+        result = cv2.bitwise_and(frame, frame, mask=mask_red)
+
+        cv2.imshow('src',result)
+
+        cv2.waitKey(0)
         '''
         # 轮廓检测
         cnts = cv2.findContours(mask.copy(), cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)[-2]

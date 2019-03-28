@@ -3,7 +3,10 @@ import cv2
 import numpy as np
 
 #获取视频
-cap = cv2.VideoCapture('lipnet.mpg')
+#cap = cv2.VideoCapture('lipnet.mpg')
+
+#使用笔记本的摄像头
+cap = cv2.VideoCapture(0)
 
 #判读正确打开
 isOpened = cap.isOpened()
@@ -20,10 +23,12 @@ i = 0
 while(isOpened):
 
     # 读取5张图片
+    '''
     if i == 5:
         break
     else:
         i = i + 1
+    '''
 
     (flag, frame) = cap.read()
 
@@ -41,26 +46,28 @@ while(isOpened):
         #标志点
         landmarks = np.matrix([[p.x, p.y] for p in shape.parts()])
 
-        img = frame[(shape.parts()[52].y - 5):(shape.parts()[57].y + 5),(shape.parts()[48].x - 5):(shape.parts()[54].x + 5)]
+        #img = frame[(shape.parts()[52].y - 5):(shape.parts()[57].y + 5),(shape.parts()[48].x - 5):(shape.parts()[54].x + 5)]
         #嘴唇的标志点为49-67
         #for num in range(49,68):
             #cv2.circle(frame, (shape.parts()[num-1].x, shape.parts()[num-1].y), 1, (0, 255, 0), -1)#1图片画板 2圆心 3半径 4颜色 5线条宽度 -1为实心
 
             #cv2.line(frame,(shape.parts()[num-1].x, shape.parts()[num-1].y),(shape.parts()[num].x, shape.parts()[num].y),(255,0,0),1)#连线
 
-            #cv2.rectangle(frame,(shape.parts()[48].x-5, shape.parts()[52].y-5),(shape.parts()[54].x+5, shape.parts()[57].y+5),(0,0,255),1)#画方框
+        img = cv2.rectangle(frame,(shape.parts()[48].x-5, shape.parts()[52].y-5),(shape.parts()[54].x+5, shape.parts()[57].y+5),(0,0,255),1)#画方框
 
             #img = frame[(shape.parts()[52].y-5):(shape.parts()[57].y+5),(shape.parts()[48].x-5):(shape.parts()[54].x+5)]
 
         cv2.imshow('frame', img)
 
+        '''
         fileName = 'img' + str(i) + '.jpg'
         print(fileName)
         if flag == True:
             cv2.imwrite(fileName, img, [cv2.IMWRITE_JPEG_QUALITY, 100])  # 1文件名，2内容，3保存的图片质量
-
+        '''
         if cv2.waitKey(1) & 0xFF == ord('q'):
             print("q pressed")
             break
 
+cv2.destroyAllWindows()
 
